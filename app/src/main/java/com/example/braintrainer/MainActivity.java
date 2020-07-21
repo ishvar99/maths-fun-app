@@ -21,36 +21,42 @@ public class MainActivity extends AppCompatActivity {
     int[] option_ids={R.id.option1,R.id.option2,R.id.option3,R.id.option4};
     CountDownTimer timer;
     TextView textView;
-    int totalTime=25000;
+    int totalTime=10000;
     int timeInterval=1000;
     int counter=0;
     int score=0;
-    String[] questions={"100-37+89","133+21/7"};
-    Integer[] answers={152,22};
-    Integer[][] options={{152,157,145,160},{136,22,150,35}};
+    String[] questions={"100-37+89","133+21/7","56+7*4","90-12/4","128-80/10"};
+    Integer[] answers={1,2,4,1,4};
+    Integer[][] options={{152,157,145,160},{136,22,150,35},{125,80,90,84},{87,90,105,77},{110,50,78,120}};
     public void playAgain(View view){
         counter=0;
         score=0;
+        for(int i=0;i<4;i++){
+            option[i].setEnabled(true);
+        }
         startGame(view);
     }
     public void setQuestion(int i){
-        Log.i("counter",String.valueOf(counter));
+        Log.i("i",String.valueOf(i));
         textView.setText(questions[i]);
         for(int k=0;k<4;k++){
             option[k]=findViewById(option_ids[k]);
             option[k].setText(String.valueOf(options[i][k]));
         }
+        if(i<questions.length-1)
         counter++;
     }
     public void submitAnswer(View view){
         checkAnswer((Button) view);
     }
     public void updateScore(){
+        if(score<5)
         score++;
         scoreButton.setText(score+"/5");
     }
     public void checkAnswer(Button btn){
-        if(btn.getText().toString().equals("152")){
+        if(btn.getTag().toString().equals(answers[counter-1].toString()))
+        {
             updateScore();
             setQuestion(counter);
         }
@@ -68,6 +74,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFinish() {
                 playAgain.setVisibility(View.VISIBLE);
+                for(int i=0;i<4;i++){
+                    option[i].setEnabled(false);
+                }
             }
         }.start();
     }
