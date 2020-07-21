@@ -2,6 +2,7 @@ package com.example.braintrainer;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
@@ -25,21 +26,26 @@ public class MainActivity extends AppCompatActivity {
     int timeInterval=1000;
     int counter=0;
     int score=0;
+    int nOptions=4;
     String[] questions={"100-37+89","133+21/7","56+7*4","90-12/4","128-80/10"};
+    int maxScore=questions.length;
     Integer[] answers={1,2,4,1,4};
     Integer[][] options={{152,157,145,160},{136,22,150,35},{125,80,90,84},{87,90,105,77},{110,50,78,120}};
     public void playAgain(View view){
         counter=0;
         score=0;
-        for(int i=0;i<4;i++){
-            option[i].setEnabled(true);
-        }
+        changeButtonState(true);
         startGame(view);
     }
-    public void setQuestion(int i){
-        Log.i("i",String.valueOf(i));
+    public void changeButtonState(boolean state){
+        for(int i=0;i<nOptions;i++){
+            option[i].setClickable(state);
+        }
+    }
+    public void setQuestion(int i)
+    {
         textView.setText(questions[i]);
-        for(int k=0;k<4;k++){
+        for(int k=0;k<nOptions;k++){
             option[k]=findViewById(option_ids[k]);
             option[k].setText(String.valueOf(options[i][k]));
         }
@@ -49,20 +55,21 @@ public class MainActivity extends AppCompatActivity {
     public void submitAnswer(View view){
         checkAnswer((Button) view);
     }
+    @SuppressLint("SetTextI18n")
     public void updateScore(){
-        if(score<5)
+        if(score<maxScore)
         score++;
-        scoreButton.setText(score+"/5");
+        scoreButton.setText(score+"/"+maxScore);
     }
     public void checkAnswer(Button btn){
+
         if(btn.getTag().toString().equals(answers[counter-1].toString()))
         {
             updateScore();
             setQuestion(counter);
         }
-        else{
+        else
             setQuestion(counter);
-        }
     }
     public void startTimer()
     {
@@ -74,13 +81,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFinish() {
                 playAgain.setVisibility(View.VISIBLE);
-                for(int i=0;i<4;i++){
-                    option[i].setEnabled(false);
-                }
+                changeButtonState(false);
             }
         }.start();
     }
 
+    @SuppressLint("SetTextI18n")
     public void startGame(View view){
         playAgain=findViewById(R.id.playAgain);
         playAgain.setVisibility(View.INVISIBLE);
@@ -92,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
         button.setVisibility(View.INVISIBLE);
         timerButton=findViewById(R.id.timerButton);
         startTimer();
-        scoreButton.setText(score+"/5");
+        scoreButton.setText(score+"/"+maxScore);
         setQuestion(counter);
     }
     @Override
